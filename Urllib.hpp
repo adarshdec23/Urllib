@@ -17,9 +17,9 @@ protected:
     // Eg: http://example.com?key1=val1&key2=val2
     std::string _url;
 
-private:
-    EncodeDecodeBase();
 public:
+
+    EncodeDecodeBase(){}
 
     virtual void setParameter(const std::pair<std::string, std::string> &iPair){
         this->setParameter(iPair.first, iPair.second);
@@ -39,8 +39,24 @@ public:
         return _parameters.erase(iKey);
     }
 
-    void setBaseUrl(const std::string &iBaseUrl){
+    virtual void setBaseUrl(const std::string &iBaseUrl){
         _baseUrl = iBaseUrl;
+    }
+
+    virtual const std::string& getBaseUrl(){
+        return _baseUrl;
+    }
+
+    virtual void setUrl(const std::string &iUrl){
+        _url = iUrl;
+    }
+
+    virtual const std::string& getUrl(){
+        return _url;
+    }
+
+    virtual const std::map<std::string, std::string>& getParameters(){
+        return _parameters;
     }
 };
 
@@ -83,6 +99,8 @@ class Encode : public EncodeDecodeBase{
 
 public:
 
+    Encode(){}
+
     std::string encode(){
         std::string _url = _baseUrl + "?";
         for(auto &iPair : _parameters){
@@ -109,6 +127,8 @@ class Decode : public EncodeDecodeBase{
             tokenStartPos = posOfDelimiter+1;
             posOfDelimiter = iString.find_first_of(iDelimiter, tokenStartPos);
         }
+        //There is one more (last )token left to process
+        oTokens.push_back(iString.substr(tokenStartPos));
         oTokens.shrink_to_fit();
         return oTokens;
     }
@@ -127,12 +147,12 @@ class Decode : public EncodeDecodeBase{
         }
     }
 
-    std::string decode(const std::string &iEncodedUrl){
+    const std::string& decode(const std::string iEncodedUrl){
         size_t posOfQMark = iEncodedUrl.find_first_of('?');
         if(posOfQMark == std::string::npos){
             //Nothing to decode
             _url = iEncodedUrl;
-            return iEncodedUrl;
+            return _url;
         }
         //Everything prior to ? is the baseUrl
         _baseUrl = iEncodedUrl.substr(0, posOfQMark);
@@ -167,9 +187,11 @@ class Decode : public EncodeDecodeBase{
 
 public:
 
-    std::string decode(){
+    Decode(){}
+
+    const std::string& decode(){
         if(_url.empty()){
-            return std::string();
+            return _url;
         }
         else{
             return this->decode(_url);
