@@ -1,10 +1,6 @@
 #include<locale>
 #include<map>
 #include<sstream>
-#include<algorithm>
-#include<cctype>
-#include<cstdio>
-
 
 namespace Urllib{
 
