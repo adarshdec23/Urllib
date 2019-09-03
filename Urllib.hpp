@@ -2,6 +2,7 @@
 #include<map>
 #include<sstream>
 #include<algorithm>        
+#include<vector>
 
 namespace Urllib{
 
@@ -111,23 +112,18 @@ public:
 
 
 class Decode : public EncodeDecodeBase{
+    std::vector<std::string> split(const std::string& str, const char delim) {
+        if (str.empty())
+            return {};
 
-    std::vector<std::string> split(const std::string &iString, const char iDelimiter){
-        size_t tokenStartPos = 0;
-        size_t posOfDelimiter = iString.find_first_of(iDelimiter);
-        std::vector<std::string> oTokens;
-        //If we have n delims, then there are n+1 tokens
-        oTokens.reserve(std::count(iString.begin(), iString.end(), iDelimiter) + 1);
-        while(std::string::npos != posOfDelimiter){
-            oTokens.push_back(iString.substr(tokenStartPos, posOfDelimiter));
-            //For the next loop
-            tokenStartPos = posOfDelimiter+1;
-            posOfDelimiter = iString.find_first_of(iDelimiter, tokenStartPos);
+        std::vector<std::string> tokens;
+        std::istringstream iss(str);
+        std::string token;
+
+        while (std::getline(iss, token, delim)) {
+            tokens.push_back(token);
         }
-        //There is one more (last )token left to process
-        oTokens.push_back(iString.substr(tokenStartPos));
-        oTokens.shrink_to_fit();
-        return oTokens;
+        return tokens;
     }
 
     void buildParameters(const std::string &iParameters){
